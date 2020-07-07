@@ -1,18 +1,14 @@
 import * as fc from 'd3fc';
 import * as d3 from 'd3';
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Reconciler from 'react-reconciler';
 import omit from 'lodash-es/omit';
-import upperFirst from 'lodash-es/upperFirst';
-import ResizeObserver from 'resize-observer-polyfill';
 
 const roots = new Map();
 const emptyObject = {};
 
 // props
-const data = fc.randomGeometricBrownianMotion().steps(50)(1);
-const xScale = d3.scaleLinear().domain([0, data.length - 1]);
-const yScale = d3.scaleLinear().domain(fc.extentLinear()(data));
+export const data = fc.randomGeometricBrownianMotion().steps(50)(1);
 
 // This config is supposed to explain to React the target platform,
 // What elements it has, how they update, how children are added/removed, etc.
@@ -23,11 +19,7 @@ const Renderer = Reconciler({
   // Turns a string-type into a real object
   createInstance(type, props, rootContainerInstance, hostContext, internalInstanceHandle) {
     // Here we create the actual d3fc object
-    const instance = fc[type]()
-      .xScale(xScale)
-      .yScale(yScale)
-      .crossValue((_, i) => i)
-      .mainValue((d) => d);
+    const instance = fc[type]();
     // Apply some properties
     applyProps(instance, props, {});
     // Then pass it back to React, it will keep it from now on
@@ -52,8 +44,8 @@ const Renderer = Reconciler({
         })
         .on('measure', () => {
           const { width, height } = d3.event.detail;
-          xScale.range([0, width]);
-          yScale.range([height, 0]);
+          child.xScale().range([0, width]);
+          child.yScale().range([height, 0]);
 
           const ctx = parentInstance.querySelector('canvas').getContext('2d');
           child.context(ctx);
@@ -197,14 +189,11 @@ export function Canvas({ children, style, ...props }) {
 
 // This function takes old and new props, then updates the instance
 function applyProps(instance, newProps, oldProps) {
-  //   const sameProps = Object.keys(newProps).filter(key => newProps[key] === oldProps[key])
-  //   const handlers = Object.keys(newProps).filter(key => typeof newProps[key] === 'function' && key.startsWith('on'))
-  //   const filteredProps = omit(newProps, [...sameProps, ...handlers, 'children', 'key', 'ref'])
-  //   if (Object.keys(filteredProps).length > 0) {
-  //     Object.entries(filteredProps).map(([key, value]) => {
-  //       const [targetName, ...entries] = key.split('-').reverse()
-  //       const target = entries.reverse().reduce((acc, key) => acc[key.toLowerCase()], instance)
-  //       target[targetName.toLowerCase()] = value
-  //     })
-  //   }
+  const sameProps = Object.keys(newProps).filter((key) => newProps[key] === oldProps[key]);
+  const filteredProps = omit(newProps, [...sameProps, 'children', 'key', 'ref']);
+  if (Object.keys(filteredProps).length > 0) {
+    Object.entries(filteredProps).forEach(([key, value]) => {
+      instance[key](value);
+    });
+  }
 }
