@@ -12,8 +12,7 @@
     "react-dom": "16.13.1",
     "react-reconciler": "0.25.1",
     "react-scripts": "3.4.1",
-    "resize-observer-polyfill": "1.5.1",
-    "three": "0.116.1"
+    "resize-observer-polyfill": "1.5.1"
   },
   "devDependencies": {},
   "scripts": {
