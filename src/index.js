@@ -17,6 +17,7 @@ ReactDOM.render(
       crossValue={(_, i) => i}
       mainValue={(d) => d}
       data={data}
+      context={'2d'}
     />
   </Canvas>,
   document.getElementById('root')

@@ -7,8 +7,9 @@ import omit from 'lodash-es/omit';
 const roots = new Map();
 const emptyObject = {};
 
-// TODO: Handle data better
+// TODO: Handle data and context better
 let data;
+let context;
 
 const Renderer = Reconciler({
   supportsMutation: true,
@@ -44,7 +45,9 @@ const Renderer = Reconciler({
           child.xScale().range([0, width]);
           child.yScale().range([height, 0]);
 
-          const ctx = parentInstance.querySelector('canvas').getContext('2d');
+          const ctx = parentInstance
+            .querySelector('canvas')
+            .getContext(context);
           child.context(ctx);
         });
     }
@@ -128,6 +131,7 @@ function applyProps(instance, newProps, oldProps) {
   const filteredProps = omit(newProps, [
     ...sameProps,
     'data',
+    'context',
     'children',
     'key',
     'ref'
@@ -138,4 +142,5 @@ function applyProps(instance, newProps, oldProps) {
     });
   }
   data = newProps.data;
+  context = newProps.context;
 }
