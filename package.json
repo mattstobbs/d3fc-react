@@ -7,7 +7,7 @@
   "dependencies": {
     "d3": "^5.16.0",
     "d3fc": "^15.0.8",
-    "lodash-es": "4.17.15",
+    "lodash-es": "4.17.21",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-reconciler": "0.25.1",
